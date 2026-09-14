@@ -1,4 +1,4 @@
-﻿# Looka - Backend API Service
+# Looka - Backend API Service
 
 > **Intelligent Digital Closet & Multimedia-Driven Outfit Recommendation Web Platform**  
 > Projek Akhir Kelas Web Development - Web Developer KSM Multimedia 2026
@@ -80,7 +80,7 @@ Sesuaikan konfigurasi database PostgreSQL dan port (default: `5001`):
 ```env
 PORT=5001
 NODE_ENV=development
-DATABASE_URL=postgresql://looka:looka123@localhost:5432/looka_db
+DATABASE_URL=postgresql://looka:looka123password@localhost:5432/looka_db
 JWT_SECRET=supersecretjwtkey_looka_2026_ksm_multimedia
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173

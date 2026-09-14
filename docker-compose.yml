@@ -1,0 +1,40 @@
+﻿services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: looka_postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: looka
+      POSTGRES_PASSWORD: looka123password
+      POSTGRES_DB: looka_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - looka_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U looka -d looka_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: looka_backend_app
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      PORT: 5001
+      NODE_ENV: development
+      DATABASE_URL: postgresql://looka:looka123password@postgres:5432/looka_db
+      JWT_SECRET: supersecretjwtkey_looka_2026_ksm_multimedia
+      JWT_EXPIRES_IN: 7d
+      CLIENT_URL: http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+
+volumes:
+  looka_pgdata:
