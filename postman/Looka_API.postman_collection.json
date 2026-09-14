@@ -1,0 +1,235 @@
+{
+  "info": {
+    "_postman_id": "looka-backend-api-ksm-multimedia-2026",
+    "name": "Looka API - KSM Multimedia 2026",
+    "description": "Dokumentasi Kontrak RESTful API resmi untuk Looka (Smart Wardrobe & Outfit Recommender System).\n\nTech Stack:\n- Node.js & Express.js\n- PostgreSQL & Drizzle ORM\n- JWT Stateless Authentication\n- Docker & Docker Compose",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5001/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "System Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"SecretPassword123!\",\n  \"stylePreference\": \"Casual\",\n  \"city\": \"Jakarta\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"SecretPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Smart Wardrobe (Clothes)",
+      "item": [
+        {
+          "name": "Get User Clothes (with Filter & Search)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clothes?category=Tops&color=Navy&search=Kemeja",
+              "host": ["{{base_url}}"],
+              "path": ["clothes"],
+              "query": [
+                { "key": "category", "value": "Tops" },
+                { "key": "color", "value": "Navy" },
+                { "key": "search", "value": "Kemeja" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload & Create Clothing Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Kemeja Oxford Navy", "type": "text" },
+                { "key": "category", "value": "Tops", "type": "text" },
+                { "key": "color", "value": "Navy", "type": "text" },
+                { "key": "style", "value": "Smart Casual", "type": "text" },
+                { "key": "occasion", "value": "Work/Campus", "type": "text" },
+                { "key": "weather", "value": "All Weather", "type": "text" },
+                { "key": "image", "type": "file", "src": [] }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/clothes",
+              "host": ["{{base_url}}"],
+              "path": ["clothes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Clothing Item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kemeja Oxford Dark Navy (Updated)\",\n  \"style\": \"Formal\",\n  \"occasion\": \"Presentation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clothes/1",
+              "host": ["{{base_url}}"],
+              "path": ["clothes", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Clothing Item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clothes/1",
+              "host": ["{{base_url}}"],
+              "path": ["clothes", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Outfit Recommender & Lookbook",
+      "item": [
+        {
+          "name": "Generate Outfit Recommendations",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"occasion\": \"Casual Hangout\",\n  \"lockedItemId\": null,\n  \"city\": \"Jakarta\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recommendations",
+              "host": ["{{base_url}}"],
+              "path": ["recommendations"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Log Outfit (Wear Today)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topId\": 1,\n  \"bottomId\": 2,\n  \"outerId\": null,\n  \"footwearId\": 4,\n  \"wornDate\": \"2026-09-14\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/outfits/wear-today",
+              "host": ["{{base_url}}"],
+              "path": ["outfits", "wear-today"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Wardrobe Analytics",
+      "item": [
+        {
+          "name": "Get Wardrobe Utilization Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/analytics",
+              "host": ["{{base_url}}"],
+              "path": ["users", "analytics"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
