@@ -58,7 +58,7 @@ export const globalErrorHandler = (err, req, res, next) => {
 
   // Zod Validation Error (if passed to next(err))
   if (err.name === 'ZodError') {
-    const formattedErrors = err.errors?.map((e) => ({
+    const formattedErrors = (err.issues || err.errors || []).map((e) => ({
       field: e.path.join('.'),
       message: e.message,
     }));

@@ -1,4 +1,5 @@
-﻿import { errorResponse } from '../utils/response.js';
+﻿import fs from 'fs';
+import { errorResponse } from '../utils/response.js';
 
 export const validateBody = (schema) => (req, res, next) => {
   try {
@@ -6,8 +7,18 @@ export const validateBody = (schema) => (req, res, next) => {
     req.body = parsed;
     next();
   } catch (err) {
+    // If a file was uploaded prior to validation failure, remove it to prevent orphaned files
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkErr) {
+        console.error('[UPLOAD] Error removing invalid uploaded file:', unlinkErr.message);
+      }
+    }
+
     if (err.name === 'ZodError') {
-      const formattedErrors = err.errors.map((e) => ({
+      const issues = err.issues || err.errors || [];
+      const formattedErrors = issues.map((e) => ({
         field: e.path.join('.'),
         message: e.message,
       }));
