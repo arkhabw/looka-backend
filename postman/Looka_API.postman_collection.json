@@ -118,20 +118,38 @@
       "name": "2. Smart Wardrobe (Clothes)",
       "item": [
         {
-          "name": "Get User Clothes (with Filter & Search)",
+          "name": "Get Filter Metadata (Categories, Colors, Styles)",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/clothes?category=Tops&color=Navy&search=Kemeja",
+              "raw": "{{base_url}}/clothes/meta/filters",
+              "host": ["{{base_url}}"],
+              "path": ["clothes", "meta", "filters"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Clothes (with Filter, Search & Sorting)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clothes?category=Tops&color=Navy&style=Casual&search=Kemeja&sortBy=newest",
               "host": ["{{base_url}}"],
               "path": ["clothes"],
               "query": [
                 { "key": "category", "value": "Tops" },
                 { "key": "color", "value": "Navy" },
-                { "key": "search", "value": "Kemeja" }
+                { "key": "style", "value": "Casual" },
+                { "key": "occasion", "value": "Casual Hangout" },
+                { "key": "search", "value": "Kemeja" },
+                { "key": "sortBy", "value": "newest" }
               ]
             }
           },
@@ -165,16 +183,37 @@
           "response": []
         },
         {
-          "name": "Update Clothing Item",
+          "name": "Get Clothing Item Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clothes/1",
+              "host": ["{{base_url}}"],
+              "path": ["clothes", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Clothing Item (Metadata or Replace Image)",
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Kemeja Oxford Dark Navy (Updated)\",\n  \"style\": \"Formal\",\n  \"occasion\": \"Presentation\"\n}"
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Kemeja Oxford Dark Navy (Updated)", "type": "text" },
+                { "key": "category", "value": "Tops", "type": "text" },
+                { "key": "color", "value": "Dark Navy", "type": "text" },
+                { "key": "style", "value": "Formal", "type": "text" },
+                { "key": "occasion", "value": "Presentation", "type": "text" },
+                { "key": "image", "type": "file", "src": [] }
+              ]
             },
             "url": {
               "raw": "{{base_url}}/clothes/1",

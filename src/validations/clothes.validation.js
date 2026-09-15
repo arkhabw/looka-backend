@@ -20,3 +20,16 @@ export const createClothingSchema = z.object({
   occasion: z.string().max(50).optional().default('Casual Hangout'),
   weather: z.string().max(50).optional().default('All Weather'),
 });
+
+export const updateClothingSchema = z.object({
+  name: z.string().min(2, 'Nama pakaian minimal 2 karakter').max(150).optional(),
+  category: z.enum(CATEGORIES, {
+    errorMap: () => ({
+      message: `Kategori tidak valid. Pilihan kategori: ${CATEGORIES.join(', ')}`,
+    }),
+  }).optional(),
+  color: z.string().min(1).max(50).optional(),
+  style: z.string().max(50).optional(),
+  occasion: z.string().max(50).optional(),
+  weather: z.string().max(50).optional(),
+});
