@@ -10,13 +10,14 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/recommendations.test.mjs"
   },
   "bugs": {
     "url": "https://github.com/arkhabw/looka-backend/issues"
   },
   "homepage": "https://github.com/arkhabw/looka-backend#readme",
   "dependencies": {
+    "@google/genai": "^2.22.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

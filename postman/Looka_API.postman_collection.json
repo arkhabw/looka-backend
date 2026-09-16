@@ -1,4 +1,4 @@
-﻿{
+{
   "info": {
     "_postman_id": "looka-backend-api-ksm-multimedia-2026",
     "name": "Looka API - KSM Multimedia 2026",
@@ -244,7 +244,7 @@
       "name": "3. Outfit Recommender & Lookbook",
       "item": [
         {
-          "name": "Generate Outfit Recommendations",
+          "name": "Generate Outfit Recommendations (POST with filters)",
           "request": {
             "method": "POST",
             "header": [
@@ -259,6 +259,36 @@
               "raw": "{{base_url}}/recommendations",
               "host": ["{{base_url}}"],
               "path": ["recommendations"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Outfit Recommendations (GET quick / query params)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recommendations?occasion=Casual%20Hangout&city=Jakarta",
+              "host": ["{{base_url}}"],
+              "path": ["recommendations"],
+              "query": [
+                {
+                  "key": "occasion",
+                  "value": "Casual Hangout"
+                },
+                {
+                  "key": "city",
+                  "value": "Jakarta"
+                },
+                {
+                  "key": "lockedItemId",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
             }
           },
           "response": []
