@@ -16,6 +16,8 @@ console.log('====================================================\n');
 try {
   await run('tests/outfits.test.mjs');
   console.log('\n');
+  await run('tests/analytics.test.mjs');
+  console.log('\n');
   await run('tests/recommendations.test.mjs');
   console.log('\n====================================================');
   console.log('[TEST RUNNER] All Test Suites Passed Successfully');

@@ -4,6 +4,7 @@ import authRoutes from './auth.routes.js';
 import clothesRoutes from './clothes.routes.js';
 import recommendationRoutes from './recommendation.routes.js';
 import outfitRoutes from './outfit.routes.js';
+import userRoutes from './user.routes.js';
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.use('/recommendations', recommendationRoutes);
 // Mount Outfit Management & Calendar endpoints
 router.use('/outfits', outfitRoutes);
 
-// Ready placeholders for subsequent Day sprints:
-// router.use('/users', userRoutes);
+// Mount User & Analytics endpoints
+router.use('/users', userRoutes);
 
 export default router;
