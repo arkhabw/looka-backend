@@ -294,7 +294,7 @@
           "response": []
         },
         {
-          "name": "Log Outfit (Wear Today)",
+          "name": "Create Saved Outfit (Lookbook)",
           "request": {
             "method": "POST",
             "header": [
@@ -303,12 +303,154 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"topId\": 1,\n  \"bottomId\": 2,\n  \"outerId\": null,\n  \"footwearId\": 4,\n  \"wornDate\": \"2026-09-14\"\n}"
+              "raw": "{\n  \"name\": \"Signature Streetwear\",\n  \"topId\": 1,\n  \"bottomId\": 2,\n  \"outerId\": null,\n  \"footwearId\": 4,\n  \"occasion\": \"Casual Hangout\",\n  \"isFavorite\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/outfits",
+              "host": ["{{base_url}}"],
+              "path": ["outfits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Saved Outfits List",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/outfits",
+              "host": ["{{base_url}}"],
+              "path": ["outfits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Favorite Outfits",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/outfits?isFavorite=true",
+              "host": ["{{base_url}}"],
+              "path": ["outfits"],
+              "query": [
+                {
+                  "key": "isFavorite",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Outfit Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/outfits/1",
+              "host": ["{{base_url}}"],
+              "path": ["outfits", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Outfit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Lookbook Outfit\",\n  \"isFavorite\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/outfits/1",
+              "host": ["{{base_url}}"],
+              "path": ["outfits", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Outfit",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/outfits/1",
+              "host": ["{{base_url}}"],
+              "path": ["outfits", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Log Outfit (Wear Today / OOTD)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"outfitId\": 1,\n  \"wornDate\": \"2026-09-16\",\n  \"notes\": \"Dipakai untuk kuliah dan hangout sore\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/outfits/wear-today",
               "host": ["{{base_url}}"],
               "path": ["outfits", "wear-today"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get OOTD Calendar History",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/outfits/calendar?month=2026-09",
+              "host": ["{{base_url}}"],
+              "path": ["outfits", "calendar"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2026-09"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Calendar Log",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/outfits/calendar/1",
+              "host": ["{{base_url}}"],
+              "path": ["outfits", "calendar", "1"]
             }
           },
           "response": []

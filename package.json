@@ -10,7 +10,7 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "test": "node tests/recommendations.test.mjs"
+    "test": "node tests/runner.mjs"
   },
   "bugs": {
     "url": "https://github.com/arkhabw/looka-backend/issues"

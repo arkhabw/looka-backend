@@ -3,6 +3,7 @@ import healthRoutes from './health.routes.js';
 import authRoutes from './auth.routes.js';
 import clothesRoutes from './clothes.routes.js';
 import recommendationRoutes from './recommendation.routes.js';
+import outfitRoutes from './outfit.routes.js';
 
 const router = Router();
 
@@ -18,8 +19,10 @@ router.use('/clothes', clothesRoutes);
 // Mount Outfit Recommendation endpoints
 router.use('/recommendations', recommendationRoutes);
 
+// Mount Outfit Management & Calendar endpoints
+router.use('/outfits', outfitRoutes);
+
 // Ready placeholders for subsequent Day sprints:
-// router.use('/outfits', outfitRoutes);
 // router.use('/users', userRoutes);
 
 export default router;
