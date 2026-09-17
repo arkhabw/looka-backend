@@ -1,4 +1,4 @@
-﻿services:
+services:
   postgres:
     image: postgres:16-alpine
     container_name: looka_postgres_db
@@ -23,6 +23,8 @@
     restart: unless-stopped
     ports:
       - "5001:5001"
+    env_file:
+      - .env
     environment:
       PORT: 5001
       NODE_ENV: development
