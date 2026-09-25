@@ -1,4 +1,4 @@
-﻿import { ENV } from '../config/env.js';
+import { ENV } from '../config/env.js';
 
 /**
  * Service to fetch real-time weather or return realistic fallback data
@@ -14,8 +14,9 @@ export const getWeatherForCity = async (city = 'Jakarta') => {
         targetCity
       )}&units=metric&lang=id&appid=${apiKey}`;
 
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(4000) });
       if (response.ok) {
+
         const data = await response.json();
         const temp = Math.round(data.main.temp);
         const condition = data.weather[0]?.main || 'Clear';

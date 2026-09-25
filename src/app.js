@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,19 +11,29 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// 1. CORS Configuration (Allow frontend client port)
+// 1. CORS Configuration (Allow frontend client ports & deployment domains)
 const allowedOrigins = [
   ENV.CLIENT_URL,
   'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
-];
+].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (mobile apps, curl, postman)
+      if (!origin) return callback(null, true);
+
+      // Allow if explicit match or ends with .vercel.app / .netlify.app
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        origin.endsWith('.netlify.app') ||
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1');
+
+      if (isAllowed) {
         callback(null, true);
       } else {
         callback(new Error(`CORS blocked for origin: ${origin}`));

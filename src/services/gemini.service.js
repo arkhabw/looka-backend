@@ -48,19 +48,36 @@ Tolong berikan ulasan gaya (stylist review) yang singkat, elegan, bersahabat, da
 
 Jelaskan secara singkat mengapa kombinasi warna dan potongan ini cocok untuk acara dan cuaca tersebut, serta berikan satu tips styling singkat. Hindari penggunaan bullet points, langsung tuliskan dalam 1 paragraf mengalir.`;
 
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini API call timed out after 5000ms')), 5000)
+      );
+
       let response;
       try {
-        response = await client.models.generateContent({
-          model: 'gemini-3.6-flash',
-          contents: prompt,
-        });
+        response = await Promise.race([
+          client.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+          }),
+          timeoutPromise,
+        ]);
       } catch (errModel) {
-        // Fallback to active lightweight model: gemini-3.5-flash-lite
-        response = await client.models.generateContent({
-          model: 'gemini-3.5-flash-lite',
-          contents: prompt,
-        });
+        try {
+          const fallbackTimeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Gemini fallback timed out after 3000ms')), 3000)
+          );
+          response = await Promise.race([
+            client.models.generateContent({
+              model: 'gemini-1.5-flash',
+              contents: prompt,
+            }),
+            fallbackTimeout,
+          ]);
+        } catch {
+          // Handled below by rule-based fallback
+        }
       }
+
 
       const text = response?.text?.trim();
       if (text) {

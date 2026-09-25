@@ -1,4 +1,4 @@
-﻿import 'dotenv/config';
+import 'dotenv/config';
 
 export const ENV = {
   PORT: process.env.PORT || 5001,
@@ -9,4 +9,5 @@ export const ENV = {
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
   OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY || '',
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  CLOUDINARY_URL: process.env.CLOUDINARY_URL || '',
 };

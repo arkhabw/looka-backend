@@ -39,8 +39,11 @@ const calculateOccasionScore = (top, bottom, outer, occasion = 'Casual Hangout',
   const targetStyle = stylePreference.toLowerCase();
 
   // Occasion matching
-  if (top.occasion?.toLowerCase() === targetOccasion) score += 10;
-  if (bottom?.occasion?.toLowerCase() === targetOccasion) score += 10;
+  const topOcc = (top.occasion || '').toLowerCase();
+  const botOcc = (bottom?.occasion || '').toLowerCase();
+  if (topOcc === targetOccasion || (topOcc && targetOccasion.includes(topOcc)) || (targetOccasion && topOcc.includes(targetOccasion))) score += 10;
+  if (botOcc === targetOccasion || (botOcc && targetOccasion.includes(botOcc)) || (targetOccasion && botOcc.includes(targetOccasion))) score += 10;
+
 
   // Style cohesion
   if (top.style && bottom?.style && top.style.toLowerCase() === bottom.style.toLowerCase()) {

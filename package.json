@@ -10,8 +10,10 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:seed": "node src/db/seed.js",
     "test": "node tests/runner.mjs"
   },
+
   "bugs": {
     "url": "https://github.com/arkhabw/looka-backend/issues"
   },
@@ -19,12 +21,14 @@
   "dependencies": {
     "@google/genai": "^2.22.0",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.3.0",
+    "multer-storage-cloudinary": "^4.0.0",
     "pg": "^8.23.0",
     "zod": "^4.6.5"
   },

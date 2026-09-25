@@ -1,11 +1,30 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../config/db.js';
-import { clothes, outfits, outfitLogs } from '../db/schema.js';
+import { users, clothes, outfits, outfitLogs } from '../db/schema.js';
+import { getWeatherForCity } from './weather.service.js';
 
 /**
  * Service to aggregate and calculate comprehensive wardrobe analytics
  */
 export const getWardrobeAnalytics = async (userId) => {
+  // 0. Fetch user profile for city weather
+  let weather = null;
+  try {
+    const [userProfile] = await db
+      .select({ city: users.city })
+      .from(users)
+      .where(eq(users.id, userId));
+    const city = userProfile?.city || 'Jakarta';
+    const rawWeather = await getWeatherForCity(city);
+    weather = {
+      ...rawWeather,
+      unit: 'C',
+      note: `${rawWeather.description || rawWeather.condition}, ${rawWeather.temperature}°C`,
+    };
+  } catch (err) {
+    console.warn('[ANALYTICS] Weather fetch warning:', err.message);
+  }
+
   // 1. Fetch user's entire clothes, outfits, and calendar wear logs
   const userClothes = await db.select().from(clothes).where(eq(clothes.userId, userId));
   const userOutfits = await db.select().from(outfits).where(eq(outfits.userId, userId));
@@ -13,6 +32,7 @@ export const getWardrobeAnalytics = async (userId) => {
     where: eq(outfitLogs.userId, userId),
     with: { outfit: true },
   });
+
 
   const totalClothes = userClothes.length;
   const totalOutfits = userOutfits.length;
@@ -115,5 +135,7 @@ export const getWardrobeAnalytics = async (userId) => {
     mostWornItems,
     neglectedItems,
     sustainabilityInsight: advice,
+    weather,
   };
 };
+

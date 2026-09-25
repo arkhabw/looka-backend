@@ -1,10 +1,11 @@
-﻿import fs from 'fs';
+import fs from 'fs';
 import path from 'path';
 import { eq, and, desc, asc, ilike } from 'drizzle-orm';
 import { db } from '../config/db.js';
 import { clothes } from '../db/schema.js';
 import { successResponse, errorResponse } from '../utils/response.js';
 import { CATEGORIES } from '../validations/clothes.validation.js';
+import { deleteFromCloudinary } from '../config/cloudinary.js';
 
 /**
  * Controller: Create new clothing item with image upload
@@ -23,7 +24,9 @@ export const createClothing = async (req, res, next) => {
     }
 
     const { name, category, color, style, occasion, weather } = req.body;
-    const imageUrl = req.file.filename;
+    const imageUrl = (req.file.path && req.file.path.startsWith('http'))
+      ? req.file.path
+      : req.file.filename;
 
     // 2. Insert into database
     const [newClothing] = await db
@@ -201,17 +204,23 @@ export const updateClothing = async (req, res, next) => {
 
     // 2. Handle optional image replacement
     if (req.file) {
-      const oldImageFilename = existingItem.imageUrl;
-      updateData.imageUrl = req.file.filename;
+      const oldImageUrl = existingItem.imageUrl;
+      updateData.imageUrl = (req.file.path && req.file.path.startsWith('http'))
+        ? req.file.path
+        : req.file.filename;
 
-      // Delete old physical image file
-      if (oldImageFilename) {
-        const oldFilePath = path.resolve('uploads', oldImageFilename);
-        if (fs.existsSync(oldFilePath)) {
-          try {
-            fs.unlinkSync(oldFilePath);
-          } catch (unlinkErr) {
-            console.warn('[UPLOAD] Gagal menghapus file lama:', unlinkErr.message);
+      // Delete old physical image file (Cloudinary or local disk)
+      if (oldImageUrl) {
+        if (oldImageUrl.startsWith('http')) {
+          await deleteFromCloudinary(oldImageUrl);
+        } else {
+          const oldFilePath = path.resolve('uploads', oldImageUrl);
+          if (fs.existsSync(oldFilePath)) {
+            try {
+              fs.unlinkSync(oldFilePath);
+            } catch (unlinkErr) {
+              console.warn('[UPLOAD] Gagal menghapus file lama:', unlinkErr.message);
+            }
           }
         }
       }
@@ -264,14 +273,18 @@ export const deleteClothing = async (req, res, next) => {
       });
     }
 
-    // 2. Delete physical image file
+    // 2. Delete physical image file (Cloudinary or local disk)
     if (existingItem.imageUrl) {
-      const filePath = path.resolve('uploads', existingItem.imageUrl);
-      if (fs.existsSync(filePath)) {
-        try {
-          fs.unlinkSync(filePath);
-        } catch (unlinkErr) {
-          console.warn('[UPLOAD] Gagal menghapus file gambar:', unlinkErr.message);
+      if (existingItem.imageUrl.startsWith('http')) {
+        await deleteFromCloudinary(existingItem.imageUrl);
+      } else {
+        const filePath = path.resolve('uploads', existingItem.imageUrl);
+        if (fs.existsSync(filePath)) {
+          try {
+            fs.unlinkSync(filePath);
+          } catch (unlinkErr) {
+            console.warn('[UPLOAD] Gagal menghapus file gambar:', unlinkErr.message);
+          }
         }
       }
     }

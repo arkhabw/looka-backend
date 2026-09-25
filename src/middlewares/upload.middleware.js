@@ -1,6 +1,8 @@
-﻿import multer from 'multer';
+import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary, { isCloudinaryConfigured } from '../config/cloudinary.js';
 import { errorResponse } from '../utils/response.js';
 
 // Ensure uploads directory exists
@@ -9,8 +11,8 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// 1. Storage Configuration
-const storage = multer.diskStorage({
+// 1. Storage Configuration (Cloudinary or local disk fallback)
+const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
@@ -20,6 +22,23 @@ const storage = multer.diskStorage({
     cb(null, `clothing-${uniqueSuffix}${ext}`);
   },
 });
+
+let storage = diskStorage;
+if (isCloudinaryConfigured() && process.env.STORAGE_DRIVER !== 'local') {
+  try {
+    storage = new CloudinaryStorage({
+      cloudinary,
+      params: {
+        folder: 'looka_clothes',
+        allowed_formats: ['jpeg', 'png', 'jpg', 'webp'],
+        transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+      },
+    });
+  } catch (storageErr) {
+    console.warn('[UPLOAD] Failed to initialize Cloudinary storage, using diskStorage:', storageErr.message);
+    storage = diskStorage;
+  }
+}
 
 // 2. File Filter (Only JPG, PNG, WEBP)
 const fileFilter = (req, file, cb) => {

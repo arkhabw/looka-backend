@@ -1,7 +1,8 @@
-﻿import bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { eq } from 'drizzle-orm';
+import { eq, or, ilike } from 'drizzle-orm';
 import { db } from '../config/db.js';
+
 import { users } from '../db/schema.js';
 import { ENV } from '../config/env.js';
 import { successResponse, errorResponse } from '../utils/response.js';
@@ -86,19 +87,28 @@ export const register = async (req, res, next) => {
  */
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const rawIdentifier = req.body.identifier || req.body.email || req.body.username;
+    const identifier = (rawIdentifier || '').toLowerCase().trim();
+    const { password } = req.body;
 
-    // 1. Find user by email
+    if (!identifier) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: 'Email atau username wajib diisi.',
+      });
+    }
+
+    // 1. Find user by email or username (case-insensitive)
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email.toLowerCase().trim()))
+      .where(or(ilike(users.email, identifier), ilike(users.username, identifier)))
       .limit(1);
 
     if (!user) {
       return errorResponse(res, {
         statusCode: 401,
-        message: 'Email atau password yang Anda masukkan salah.',
+        message: 'Email/username atau password yang Anda masukkan salah.',
       });
     }
 
@@ -107,9 +117,10 @@ export const login = async (req, res, next) => {
     if (!isMatch) {
       return errorResponse(res, {
         statusCode: 401,
-        message: 'Email atau password yang Anda masukkan salah.',
+        message: 'Email/username atau password yang Anda masukkan salah.',
       });
     }
+
 
     // 3. Generate JWT Token
     const token = generateToken({
