@@ -1,4 +1,4 @@
-﻿import fs from 'fs';
+import fs from 'fs';
 import { errorResponse } from '../utils/response.js';
 
 export const validateBody = (schema) => (req, res, next) => {
@@ -26,6 +26,52 @@ export const validateBody = (schema) => (req, res, next) => {
       return errorResponse(res, {
         statusCode: 400,
         message: 'Validasi data gagal. Periksa kembali input Anda.',
+        errors: formattedErrors,
+      });
+    }
+    next(err);
+  }
+};
+
+export const validateQuery = (schema) => (req, res, next) => {
+  try {
+    const parsed = schema.parse(req.query);
+    req.query = parsed;
+    next();
+  } catch (err) {
+    if (err.name === 'ZodError') {
+      const issues = err.issues || err.errors || [];
+      const formattedErrors = issues.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+
+      return errorResponse(res, {
+        statusCode: 400,
+        message: 'Validasi parameter query gagal. Periksa kembali input Anda.',
+        errors: formattedErrors,
+      });
+    }
+    next(err);
+  }
+};
+
+export const validateParams = (schema) => (req, res, next) => {
+  try {
+    const parsed = schema.parse(req.params);
+    req.params = parsed;
+    next();
+  } catch (err) {
+    if (err.name === 'ZodError') {
+      const issues = err.issues || err.errors || [];
+      const formattedErrors = issues.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+
+      return errorResponse(res, {
+        statusCode: 400,
+        message: 'Validasi parameter URL gagal.',
         errors: formattedErrors,
       });
     }

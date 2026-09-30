@@ -21,6 +21,7 @@ services:
     build: .
     container_name: looka_backend_app
     restart: unless-stopped
+    command: sh -c "npx drizzle-kit push && npm start"
     ports:
       - "5001:5001"
     env_file:
