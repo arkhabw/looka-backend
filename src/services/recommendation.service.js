@@ -209,25 +209,26 @@ export const generateOutfitRecommendations = async ({
   // 5. Sort combinations descending by score
   combinations.sort((a, b) => b.score - a.score);
 
-  // 6. Select top 3 diverse combinations
+  // 6. Select top diverse combinations (up to 5 options for rich Shuffle experience)
+  const maxRecommendations = Math.min(5, combinations.length);
   const topRecommendations = [];
   for (const combo of combinations) {
-    if (topRecommendations.length >= 3) break;
+    if (topRecommendations.length >= maxRecommendations) break;
 
     // Check diversity: avoid returning exact same top + bottom combo twice if alternatives exist
     const isDuplicatePair = topRecommendations.some(
       (rec) => rec.top.id === combo.top.id && rec.bottom.id === combo.bottom.id && rec.outer?.id === combo.outer?.id
     );
 
-    if (!isDuplicatePair || combinations.length <= 3) {
+    if (!isDuplicatePair || combinations.length <= maxRecommendations) {
       topRecommendations.push(combo);
     }
   }
 
-  // If diversity filter resulted in fewer than 3, fill up with next best
-  if (topRecommendations.length < 3 && combinations.length > topRecommendations.length) {
+  // If diversity filter resulted in fewer than maxRecommendations, fill up with next best
+  if (topRecommendations.length < maxRecommendations && combinations.length > topRecommendations.length) {
     for (const combo of combinations) {
-      if (topRecommendations.length >= 3) break;
+      if (topRecommendations.length >= maxRecommendations) break;
       if (!topRecommendations.includes(combo)) {
         topRecommendations.push(combo);
       }

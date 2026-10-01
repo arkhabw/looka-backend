@@ -46,29 +46,30 @@ Tolong berikan ulasan gaya (stylist review) yang singkat, elegan, bersahabat, da
 - Tipe Harmoni Warna: ${harmony.harmonyType} (Skor: ${harmony.score}/100)
 - Gaya Favorit Pengguna: ${userPreference}
 
-Jelaskan secara singkat mengapa kombinasi warna dan potongan ini cocok untuk acara dan cuaca tersebut, serta berikan satu tips styling singkat. Hindari penggunaan bullet points, langsung tuliskan dalam 1 paragraf mengalir.`;
+PENTING: Tulis seluruh ulasan HANYA dalam teks polos biasa (plain text). DILARANG menggunakan tanda bintang (*), garis bawah (_), format markdown bold/italic, maupun tag HTML seperti <i> atau <b>. Jangan gunakan bullet points, langsung tuliskan dalam 1 paragraf mengalir yang rapi dan nyaman dibaca.`;
 
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Gemini API call timed out after 5000ms')), 5000)
+        setTimeout(() => reject(new Error('Gemini API call timed out after 7000ms')), 7000)
       );
 
       let response;
       try {
         response = await Promise.race([
           client.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash-lite',
             contents: prompt,
           }),
           timeoutPromise,
         ]);
       } catch (errModel) {
+        console.warn('[GEMINI] Primary model gemini-3.5-flash-lite error, falling back to gemini-3.6-flash:', errModel.message);
         try {
           const fallbackTimeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Gemini fallback timed out after 3000ms')), 3000)
+            setTimeout(() => reject(new Error('Gemini fallback timed out after 5000ms')), 5000)
           );
           response = await Promise.race([
             client.models.generateContent({
-              model: 'gemini-1.5-flash',
+              model: 'gemini-3.6-flash',
               contents: prompt,
             }),
             fallbackTimeout,
@@ -78,11 +79,17 @@ Jelaskan secara singkat mengapa kombinasi warna dan potongan ini cocok untuk aca
         }
       }
 
+      // Sanitize: strip any leftover markdown asterisks, underscores, or HTML tags (like <i>, <b>)
+      const rawText = response?.text || '';
+      const cleanText = rawText
+        .replace(/<\/?[^>]+(>|$)/gi, '') // remove HTML tags
+        .replace(/[*_`]/g, '')            // remove markdown formatting
+        .replace(/\s+/g, ' ')             // normalize whitespace
+        .trim();
 
-      const text = response?.text?.trim();
-      if (text) {
+      if (cleanText) {
         return {
-          stylistAdvice: text,
+          stylistAdvice: cleanText,
           source: 'gemini_ai',
         };
       }
